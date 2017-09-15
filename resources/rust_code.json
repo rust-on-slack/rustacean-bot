@@ -1,0 +1,5 @@
+{
+  "code": "fn main() { \n println!(\"hello!\"); \n }",
+  "optmize": "0",
+  "version" : "stable"
+}
