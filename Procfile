@@ -1,1 +1,1 @@
-worker: ./target/release/slack-bot
+web: ./target/release/slack-bot

@@ -1,10 +1,9 @@
 {
-  "name": "rustaceam-bot",
+  "name": "rustacean-bot",
   "description": "Rust Slack Inviter server",
-  "repository": "https://github.com/rust-on-slack/rustaceam-bot",
-  "success_url": "/",
+  "repository": "https://github.com/rust-on-slack/rustacean-bot",
   "keywords": ["rust", "iron"],
-  "website": "http://www.cristianoliveira.com",
+  "website": "http://www.cristianoliveira.net",
   "env": {
     "PLAYPEN_URL": {
       "description": "The playpen url for rust code eval(ex: https://play.rust-lang.org)",
