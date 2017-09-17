@@ -1,4 +1,4 @@
-# Rustaceam bot
+# Rustacean bot
 The friendly bot used on https://rust-slack.herokuapp.com
 
 ## Running
