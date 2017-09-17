@@ -3,6 +3,9 @@ name = "rustaceam-bot"
 version = "0.1.0"
 authors = ["Cristian Oliveira <cristian.oliveiradarosa@barzahlen.de>"]
 
+[bin]
+name="slack-bot"
+
 [dependencies]
 slack = "0.18.0"
 dotenv = "0.10.1"
