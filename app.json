@@ -6,9 +6,9 @@
   "keywords": ["rust", "iron"],
   "website": "http://www.cristianoliveira.com",
   "env": {
-    "SLACK_API_URL": {
-      "description": "Your slack url(ex: socketio.slack.com)",
-      "value": "YOUR-TEAM.slack.com"
+    "PLAYPEN_URL": {
+      "description": "The playpen url for rust code eval(ex: https://play.rust-lang.org)",
+      "value": "https://play.rust-lang.org"
     },
     "SLACK_API_TOKEN": {
       "description": "access token of slack, You can generate it in https://api.slack.com/web#auth",
