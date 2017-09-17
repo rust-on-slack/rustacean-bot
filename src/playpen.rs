@@ -35,6 +35,15 @@ pub struct ExecuteResponse {
     stdout: String,
     stderr: String,
 }
+impl ExecuteResponse {
+    pub fn result(&self) -> Result<&str, &str>{
+        if self.success {
+            Ok(&self.stdout)
+        } else {
+            Err(&self.stderr)
+        }
+    }
+}
 
 pub fn request_eval(code: &str) -> Result<ExecuteResponse, Error> {
     let playpen_url = env::var("PLAYPEN_URL").unwrap_or(String::new());
@@ -50,6 +59,7 @@ pub fn request_eval(code: &str) -> Result<ExecuteResponse, Error> {
 }
 
 #[test]
+#[ignore]
 fn test_it_executes_code() {
     env::set_var("PLAYPEN_URL", "https://play.rust-lang.org");
 
@@ -62,10 +72,11 @@ fn test_it_executes_code() {
     };
 
     assert_eq!(result.success, true);
-    assert_eq!(result.stdout, String::from("hello word\n"))
+    assert_eq!(result.result(), Ok("hello word\n"))
 }
 
 #[test]
+#[ignore]
 fn test_it_executes_ivalid_code() {
     env::set_var("PLAYPEN_URL", "https://play.rust-lang.org");
     let text = r#"
@@ -79,7 +90,7 @@ fn test_it_executes_ivalid_code() {
     };
 
     assert_eq!(result.success, false);
-    assert_eq!(result.stderr, String::from(r#"   Compiling playground v0.0.1 (file:///playground)
+    assert_eq!(result.result(), Err(r#"   Compiling playground v0.0.1 (file:///playground)
 error: unexpected close delimiter: `}`
  --> src/main.rs:3:5
   |
