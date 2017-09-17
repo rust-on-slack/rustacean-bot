@@ -3,8 +3,8 @@ name = "rustacean-bot"
 version = "0.1.0"
 authors = ["Cristian Oliveira <contact@cristianoliveira.net>"]
 
-[bin]
-name="slack-bot"
+[[bin]]
+name = "slack-bot"
 
 [dependencies]
 slack = "0.18.0"
