@@ -61,8 +61,6 @@ pub fn request_eval(code: &str) -> Result<ExecuteResponse, Error> {
 #[test]
 #[ignore]
 fn test_it_executes_code() {
-    env::set_var("PLAYPEN_URL", "https://play.rust-lang.org");
-
     let text = r#"fn main() { println!("hello word"); }"#;
 
     println!("{:?}", text);
@@ -78,7 +76,6 @@ fn test_it_executes_code() {
 #[test]
 #[ignore]
 fn test_it_executes_ivalid_code() {
-    env::set_var("PLAYPEN_URL", "https://play.rust-lang.org");
     let text = r#"
         println!("hello word");
     }
