@@ -1,17 +1,15 @@
-
 use slack::{self, Event, RtmClient};
 use regex::Regex;
+use playpen;
 
 pub struct Rustacean;
 
 impl Rustacean {
-    fn run_code(code: String, channel: String) -> String {
-        // let client = reqwest::Client::new().unwrap();
-        // let mut res = client.post("https://play.rust-lang.org/evaluate.json")?
-        //     .form(&params).unwrap()
-        //     .send().unwrap();
-
-        String::new()
+    fn on_code_present(&self, code: String, channel: String) {
+        match playpen::request_eval(&code) {
+            Ok(result) => println!("code: {:?}", code),
+            Err(err) => println!("error: {:?}", code),
+        }
     }
 }
 
@@ -27,7 +25,7 @@ impl slack::EventHandler for Rustacean {
 
                         match has_code(&message.text){
                             Some(code) =>
-                                println!("code: {:?}", code),
+                                self.on_code_present(code, message.channel.unwrap()),
                             None =>
                                 println!("no code"),
                         }
