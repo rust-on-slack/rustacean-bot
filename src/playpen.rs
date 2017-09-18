@@ -1,12 +1,7 @@
 use std::env;
 
-use std::io::Read;
-use serde::{Serialize, Deserialize};
 use reqwest::{Client, Error};
-use reqwest::header::{Headers, ContentType};
 use std::str;
-use std::collections::HashMap;
-use serde_json;
 
 #[derive(Debug, Clone, Serialize)]
 pub struct ExecuteRequest {
@@ -31,16 +26,16 @@ impl ExecuteRequest {
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct ExecuteResponse {
-    success: bool,
+    pub success: bool,
     stdout: String,
     stderr: String,
 }
 impl ExecuteResponse {
-    pub fn result(&self) -> Result<&str, &str>{
+    pub fn result(&self) -> &str {
         if self.success {
-            Ok(&self.stdout)
+            &self.stdout
         } else {
-            Err(&self.stderr)
+            &self.stderr
         }
     }
 }
@@ -70,7 +65,7 @@ fn test_it_executes_code() {
     };
 
     assert_eq!(result.success, true);
-    assert_eq!(result.result(), Ok("hello word\n"))
+    assert_eq!(result.result(), "hello word\n")
 }
 
 #[test]
@@ -87,7 +82,7 @@ fn test_it_executes_ivalid_code() {
     };
 
     assert_eq!(result.success, false);
-    assert_eq!(result.result(), Err(r#"   Compiling playground v0.0.1 (file:///playground)
+    assert_eq!(result.result(), r#"   Compiling playground v0.0.1 (file:///playground)
 error: unexpected close delimiter: `}`
  --> src/main.rs:3:5
   |
@@ -97,7 +92,7 @@ error: unexpected close delimiter: `}`
 error: Could not compile `playground`.
 
 To learn more, run the command again with --verbose.
-"#))
+"#)
 }
 
 

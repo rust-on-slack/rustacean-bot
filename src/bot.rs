@@ -5,16 +5,37 @@ use playpen;
 pub struct Rustacean;
 
 impl Rustacean {
-    fn on_code_present(&self, code: String) -> Option<String> {
+    fn on_message(&self, cli: &RtmClient, message: slack::Message) {
+        match message {
+            slack::Message::Standard(message) => {
+                if let Some(code) = has_code(&message.text) {
+                    if let Some(output) = self.eval_code(code) {
+                        let channel_id = message.channel.unwrap();
+                        let _ = cli.sender()
+                                   .send_message(&channel_id, &output);
+                    }
+                };
+
+                // if let Some(code) = has_bot_mention(&message.text) {
+                //     if let Some(output) = self.eval_code(code) {
+                //         let channel_id = message.channel.unwrap();
+                //         let _ = cli.sender()
+                //                    .send_message(&channel_id, &output);
+                //     }
+                // };
+            },
+            _ => println!("other")
+        }
+    }
+
+    fn eval_code(&self, code: String) -> Option<String> {
         match playpen::request_eval(&code) {
             Ok(res) => {
-                match res.result() {
-                    Ok(out) => Some(format!("output: \n ```\n{}```", out)),
-                    Err(err) => {
-                        println!("error: \n ```{}```", &err[50..100]);
-                        None
-                    },
+                if !res.success {
+                    return None
                 }
+
+                Some(format!("output: \n ```\n{}```", res.result()))
             },
             Err(err) => {
                 println!("internal error: \n {:?}", err);
@@ -29,28 +50,7 @@ impl slack::EventHandler for Rustacean {
     fn on_event(&mut self, cli: &RtmClient, event: Event) {
         println!("on_event(event: {:?})", event);
         match event {
-            Event::Message(reference) => {
-                match *reference {
-                    slack::Message::Standard(message) => {
-                        println!("message: {:?}", message);
-
-                        match has_code(&message.text){
-                            Some(code) =>{
-                                let channel_id = message.channel.unwrap();
-                                cli.sender().send_typing(&channel_id);
-                                if let Some(output) = self.on_code_present(code) {
-                                    let _ = cli.sender()
-                                        .send_message(&channel_id,
-                                                      &output);
-                                }
-                            }
-                            None => ()
-                        };
-
-                    },
-                    _ => println!("other")
-                }
-            },
+            Event::Message(reference) => self.on_message(cli, *reference),
             _ => println!("other:")
         }
     }
@@ -113,13 +113,13 @@ code
 #[ignore]
 fn test_request_code_eval() {
     let text = r#"fn main() {
-    println!("Hi");
-}
+        println!("Hi");
+    }
 
-"#;
+    "#;
 
-let bot = Rustacean;
-let result = bot.on_code_present(String::from(text));
+    let bot = Rustacean;
+    let result = bot.eval_code(String::from(text));
 
-assert_eq!(result, Some("output: \n ```\nHi\n```".to_string()))
+    assert_eq!(result, Some("output: \n ```\nHi\n```".to_string()))
 }
