@@ -6,6 +6,10 @@ authors = ["Cristian Oliveira <contact@cristianoliveira.net>"]
 [[bin]]
 name = "slack-bot"
 
+[[bin]]
+name = "slack-bot-healthcheck"
+path = "healthcheck/main.rs"
+
 [dependencies]
 slack = "0.18.0"
 dotenv = "0.10.1"
@@ -14,3 +18,7 @@ reqwest = "0.7.3"
 serde = "1.0"
 serde_derive = "1.0"
 serde_json = "1.0"
+iron = "0.5.*"
+
+[dependencies.mount]
+git = "https://github.com/iron/mount.git"
