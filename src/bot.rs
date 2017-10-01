@@ -14,6 +14,12 @@ impl Rustacean {
                         let _ = cli.sender()
                                    .send_message(&channel_id, &output);
                     }
+                } else if let Some(command) = has_command(&message.text) {
+                    if let Some(output) = self.eval_command(command) {
+                        let channel_id = message.channel.unwrap();
+                        let _ = cli.sender()
+                                   .send_message(&channel_id, &output);
+                    }
                 };
 
                 // if let Some(code) = has_bot_mention(&message.text) {
@@ -41,6 +47,14 @@ impl Rustacean {
                 println!("internal error: \n {:?}", err);
                 None
             }
+        }
+    }
+
+    fn eval_command(&self, command: String) -> Option<String> {
+        match command.to_lowercase().as_str() {
+            "docs" => Some("https://doc.rust-lang.org/".to_owned()),
+            "book" => Some("https://doc.rust-lang.org/book/second-edition/".to_owned()),
+            _ => None
         }
     }
 }
@@ -75,6 +89,29 @@ fn has_code(message: &Option<String>) -> Option<String> {
         },
         _ => None
     }
+}
+
+fn has_command(message: &Option<String>) -> Option<String> {
+    match message {
+        &Some(ref text) => {
+            let re = Regex::new(r"/help (?P<command>.*?)$").unwrap();
+            match re.captures(&text) {
+                Some(capture) => Some(String::from(&capture["command"])),
+                _ => None
+            }
+        },
+        _ => None
+    }
+}
+
+
+#[test]
+fn test_match_command() {
+    let text = r#"/help docs"#;
+
+    let result = has_command(&Some(String::from(text)));
+
+    assert_eq!(result, Some(String::from(r#"docs"#)))
 }
 
 #[test]
@@ -123,3 +160,4 @@ fn test_request_code_eval() {
 
     assert_eq!(result, Some("output: \n ```\nHi\n```".to_string()))
 }
+
