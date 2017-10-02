@@ -20,17 +20,12 @@ impl Rustacean {
                         let _ = cli.sender()
                                    .send_message(&channel_id, &output);
                     }
+                } else if let Some(output) = has_bot_mention(&message.text) {
+                    let channel_id = message.channel.unwrap();
+                    let _ = cli.sender().send_message(&channel_id, &output);
                 };
-
-                // if let Some(code) = has_bot_mention(&message.text) {
-                //     if let Some(output) = self.eval_code(code) {
-                //         let channel_id = message.channel.unwrap();
-                //         let _ = cli.sender()
-                //                    .send_message(&channel_id, &output);
-                //     }
-                // };
-            },
-            _ => println!("other")
+            }
+            _ => println!("other"),
         }
     }
 
@@ -104,6 +99,42 @@ fn has_command(message: &Option<String>) -> Option<String> {
     }
 }
 
+fn has_bot_mention(message: &Option<String>) -> Option<String> {
+    match message {
+        &Some(ref text) => {
+            let bot_name = env::var("SLACK_BOT_NAME").expect("SLACK_BOT_NAME was not found.");
+            let re = Regex::new(r"@(?P<bot>[\w_]+)").unwrap();
+            for caps in re.captures_iter(&text) {
+                if bot_name == &caps["bot"] {
+                    return Some(String::from("Hi there!"));
+                };
+            }
+            None
+        }
+        _ => None,
+    }
+}
+
+
+#[test]
+fn test_has_bot_mentions() {
+    use dotenv::dotenv;
+    dotenv().ok();
+
+    let text = r#"Hey @BotName u there?"#;
+    let result = has_bot_mention(&Some(String::from(text)));
+    assert_eq!(result, Some(String::from("Hi there!")))
+}
+
+#[test]
+fn test_has_bot_mentions_with_others_mentions() {
+    use dotenv::dotenv;
+    dotenv().ok();
+
+    let text = r#"Hey @Mario or @BotName are there?"#;
+    let result = has_bot_mention(&Some(String::from(text)));
+    assert_eq!(result, Some(String::from("Hi there!")))
+}
 
 #[test]
 fn test_match_command() {
