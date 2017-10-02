@@ -5,6 +5,7 @@ authors = ["Cristian Oliveira <contact@cristianoliveira.net>"]
 
 [[bin]]
 name = "slack-bot"
+path = "src/main.rs"
 
 [[bin]]
 name = "slack-bot-healthcheck"
